@@ -3,13 +3,14 @@ import "./App.css";
 
 const VITE_RESROBOT_API_KEY = import.meta.env.VITE_RESROBOT_API_KEY;
 
+javascript;
+
 const App = () => {
   const [location, setLocation] = useState({ latitude: null, longitude: null });
   const [stops, setStops] = useState([]);
   const [selectedStopId, setSelectedStopId] = useState(null);
   const [departures, setDepartures] = useState([]);
 
-  // Hämta användarens position
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -24,7 +25,6 @@ const App = () => {
     }
   }, []);
 
-  // Hämta närmaste hållplatser
   useEffect(() => {
     if (location.latitude && location.longitude) {
       const fetchStops = async () => {
@@ -43,7 +43,6 @@ const App = () => {
     }
   }, [location]);
 
-  // Hämta avgångar från vald hållplats
   useEffect(() => {
     if (selectedStopId) {
       const fetchDepartures = async () => {
@@ -109,3 +108,49 @@ const App = () => {
 };
 
 export default App;
+
+/*
+Ingående förklaringar:
+
+  State-hantering:
+        location: Håller reda på användarens latitud och longitud.
+        stops: En lista över närliggande hållplatser baserat på användarens plats.
+        selectedStopId: ID för den hållplats som användaren valt.
+        departures: En lista över avgångar från den valda hållplatsen.
+
+  useEffect - Geolocation : Denna hook körs en gång när komponenten först laddas, eftersom beroendearrayen [] är tom.
+    Geolocation API:
+        Om webbläsaren stödjer geolocation, hämtas användarens nuvarande position.
+        Latitud och longitud sparas i location state.
+        Om geolocation inte stöds, visas en varning.
+
+  useEffect - fetchStops: Denna hook körs när location ändras, dvs. när användarens plats har hämtats.
+    API-anrop:
+        Ett anrop görs till ResRobots API för att hämta närliggande hållplatser baserat på användarens plats.
+        Resultatet (en lista med hållplatser) sparas i stops.
+        Eventuella fel loggas i konsolen.
+
+
+  useEffect - fetchDepartures: Denna hook körs när selectedStopId ändras, dvs. när användaren har valt en hållplats.
+    API-anrop:
+        Ett anrop görs till ResRobots API för att hämta avgångar från den valda hållplatsen.
+        Resultatet (en lista med avgångar) sparas i departures.
+        console.log(data) används för att visa de mottagna data i utvecklingskonsolen.
+        Eventuella fel loggas i konsolen.
+
+
+    HTML-struktur:
+        Titeln "Pendlaren" visas högst upp.
+        Användarens latitud och longitud visas.
+        En lista över närliggande hållplatser renderas dynamiskt baserat på stops state.
+        För varje hållplats skapas en knapp som när den klickas sätter selectedStopId.
+        Om en hållplats är vald (selectedStopId är inte null), visas avgångarna från den hållplatsen.
+        Avgångarna renderas som en lista.
+
+
+Export: Komponenten App exporteras som standard för att kunna användas i andra delar av applikationen.
+
+Sammanfattning
+
+Koden är en React-applikation som använder geolocation för att hämta användarens position och sedan visa närliggande kollektivtrafikhållplatser och deras avgångar genom att anropa ResRobots API. Applikationen använder useState för att hantera state och useEffect för att hantera sidoseffekter som API-anrop.
+*/
